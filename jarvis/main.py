@@ -5,12 +5,16 @@ import musiclibrary
 import time
 
 recognizer = sr.Recognizer()
-engine = pyttsx3.init()
+engine = pyttsx3.init('sapi5')
 
 
 def speak(text): 
-    engine.say(text)
-    engine.runAndWait()
+    print(f"SPEAK CALLED WITH: {text}")
+    try:
+        engine.say(text)
+        engine.runAndWait()
+    except Exception as e:
+        print(f"Speech error: {e}")
 
 def processcommand(c):
     c = c.lower()
@@ -30,7 +34,7 @@ def processcommand(c):
         if link:
             webbrowser.open(link)
         else:
-            speak(f"Sorry, I couldn't find {song} in your music library.")
+            engine.say(f"Sorry, I couldn't find {song} in your music library.")
 
 if __name__ == "__main__":
     speak("say jarvis to activate jarvis") 
@@ -40,12 +44,11 @@ if __name__ == "__main__":
         try:
             with sr.Microphone() as source:
                 print("Listening...")
-                audio = r.listen(source, timeout=5, phrase_time_limit=4)
+                audio = r.listen(source, timeout=2, phrase_time_limit=2)
             word = r.recognize_google(audio)
             print(f"Heard: {word}")
             if (word.lower() == "jarvis"):
-                time.sleep(1)
-                speak("yes sir")
+                engine.say("yes sir")
                 with sr.Microphone() as source:
                     print("jarvis active...")
                     audio = r.listen(source)
